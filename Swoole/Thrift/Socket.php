@@ -1,18 +1,10 @@
 <?php
-require_once __DIR__ . "/Thrift/ClassLoader/ThriftClassLoader.php";
-use Thrift\ClassLoader\ThriftClassLoader;
-use Thrift\Server\TServerSocket;
+namespace Swoole\Thrift;
+use Thrift;
 use Thrift\Server\TNonblockingServer;
-use Thrift\Factory\TFramedTransportFactory;
-use Thrift\Factory\TBinaryProtocolFactory;
 use Thrift\Exception\TTransportException;
 
-$loader = new ThriftClassLoader();
-$loader->registerNamespace('Thrift', __DIR__.'/Thrift');
-//$loader->registerDefinition('Services',  __DIR__.'/Services');
-$loader->register();
-
-class SwooleThriftServer extends TNonblockingServer
+class Server extends TNonblockingServer
 {
     protected $processor = null;
     protected $serviceName = 'YYSports';
@@ -33,7 +25,7 @@ class SwooleThriftServer extends TNonblockingServer
 
     public function onReceive($serv, $fd, $from_id, $data)
     {
-        $socket = new SwooleSocket();
+        $socket = new Socket();
         $socket->setHandle($fd);
         $socket->buffer = $data;
         $socket->server = $serv;
@@ -49,7 +41,7 @@ class SwooleThriftServer extends TNonblockingServer
 
     function serve()
     {
-        $serv = new swoole_server('127.0.0.1', 8091);
+        $serv = new \swoole_server('127.0.0.1', 8091);
         $serv->on('workerStart', [$this, 'onStart']);
         $serv->on('receive', [$this, 'onReceive']);
         $serv->set(
@@ -66,8 +58,7 @@ class SwooleThriftServer extends TNonblockingServer
     }
 }
 
-
-class SwooleSocket extends Thrift\Transport\TFramedTransport
+class Socket extends Thrift\Transport\TFramedTransport
 {
     public $buffer = '';
     public $offset = 0;
@@ -135,25 +126,4 @@ class SwooleSocket extends Thrift\Transport\TFramedTransport
         $this->server->send($this->fd, $out);
         $this->wBuf_ = '';
     }
-}
-
-
-try
-{
-    $processor = new Services\HelloSwoole\HelloSwooleProcessor($yy_service);
-    $socket_tranport = new TServerSocket('0.0.0.0',8091);
-//	$socket_tranport = new TNonblockingServerSocket($host,$port);
-    //$framed_tranport = new TFramedTransport();
-    $out_factory = $in_factory = new TFramedTransportFactory();
-    $out_protocol = $in_protocol = new TBinaryProtocolFactory();
-
-    $server = new SwooleThriftServer($processor, $socket_tranport, $in_factory, $out_factory, $in_protocol, $out_protocol);
-//	$server = new TForkingServer($processor,$socket_tranport,$in_factory,$out_factory,$in_protocol,$out_protocol);
-    //$server = new TNonblockingServer($processor,$socket_tranport,$in_factory,$out_factory,$in_protocol,$out_protocol);
-    $server->serve();
-}
-catch(Expection $e)
-{
-    var_dump($e->__tostring());
-    log::err("thrift server run error : " . $e->__tostring());
 }
