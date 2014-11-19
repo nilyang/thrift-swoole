@@ -6,15 +6,11 @@ use Thrift\Server\TNonblockingServer;
 class Server extends TNonblockingServer
 {
     protected $processor = null;
-    protected $serviceName = 'YYSports';
+    protected $serviceName = 'HelloSwoole';
 
-    public function onStart()
+    function onStart()
     {
-        $processor_class = "\\Services\\" . $this->serviceName . "\\" . $this->serviceName . 'Processor';
-        $handler_class = "\\Services\\" . $this->serviceName . "\\" . $this->serviceName . 'Handler';
-
-        $handler = new $handler_class();
-        $this->processor = new $processor_class($handler);
+        echo "ThriftServer Start\n";
     }
 
     function notice($log)
@@ -24,6 +20,12 @@ class Server extends TNonblockingServer
 
     public function onReceive($serv, $fd, $from_id, $data)
     {
+        $processor_class = "\\Services\\" . $this->serviceName . "\\" . $this->serviceName . 'Processor';
+        $handler_class = "\\Services\\" . $this->serviceName . "\\Handler";
+
+        $handler = new $handler_class();
+        $this->processor = new $processor_class($handler);
+
         $socket = new Socket();
         $socket->setHandle($fd);
         $socket->buffer = $data;
@@ -43,16 +45,15 @@ class Server extends TNonblockingServer
         $serv = new \swoole_server('127.0.0.1', 8091);
         $serv->on('workerStart', [$this, 'onStart']);
         $serv->on('receive', [$this, 'onReceive']);
-        $serv->set(
-            ['worker_num'            => 1,
-             'dispatch_mode'         => 1, //1: 轮循, 3: 争抢
-             'open_length_check'     => true, //打开包长检测
-             'package_max_length'    => 8192000, //最大的请求包长度,8M
-             'package_length_type'   => 'N', //长度的类型，参见PHP的pack函数
-             'package_length_offset' => 0, //第N个字节是包长度的值
-             'package_body_offset'   => 4, //从第几个字节计算长度
-            ]
-        );
+        $serv->set(array(
+            'worker_num'            => 1,
+            'dispatch_mode'         => 1, //1: 轮循, 3: 争抢
+            'open_length_check'     => true, //打开包长检测
+            'package_max_length'    => 8192000, //最大的请求包长度,8M
+            'package_length_type'   => 'N', //长度的类型，参见PHP的pack函数
+            'package_length_offset' => 0,   //第N个字节是包长度的值
+            'package_body_offset'   => 4,   //从第几个字节计算长度
+        ));
         $serv->start();
     }
 }

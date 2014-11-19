@@ -109,7 +109,6 @@ class TBufferedTransport extends TTransport {
    */
   public function readAll($len) {
     $have = TStringFuncFactory::create()->strlen($this->rBuf_);
-      var_dump($have);
     if ($have == 0) {
       $data = $this->transport_->readAll($len);
     } else if ($have < $len) {
