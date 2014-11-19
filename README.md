@@ -1,4 +1,4 @@
 thrift-rpc-server
 =================
-Thrift RPC Server base swoole.
+Thrift RPC Server based on swoole.
 
