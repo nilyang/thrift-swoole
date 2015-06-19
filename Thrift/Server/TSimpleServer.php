@@ -25,26 +25,24 @@ class TSimpleServer extends TServer {
    *
    * @return void
    */
-    public function serve()
-    {
-        $this->transport_->listen();
+  public function serve() {
+    $this->transport_->listen();
 
-        while (!$this->stop_) {
-            try {
-                $transport = $this->transport_->accept();
+    while (!$this->stop_) {
+      try {
+        $transport = $this->transport_->accept();
 
-                if ($transport != null) {
-                    $inputTransport = $this->inputTransportFactory_->getTransport($transport);
-                    $outputTransport = $this->outputTransportFactory_->getTransport($transport);
-                    $inputProtocol = $this->inputProtocolFactory_->getProtocol($inputTransport);
-                    $outputProtocol = $this->outputProtocolFactory_->getProtocol($outputTransport);
-                    while ($this->processor_->process($inputProtocol, $outputProtocol)) {
-                    }
-                }
-            } catch (TTransportException $e) {
-            }
+        if ($transport != null) {
+          $inputTransport = $this->inputTransportFactory_->getTransport($transport);
+          $outputTransport = $this->outputTransportFactory_->getTransport($transport);
+          $inputProtocol = $this->inputProtocolFactory_->getProtocol($inputTransport);
+          $outputProtocol = $this->outputProtocolFactory_->getProtocol($outputTransport);
+          while ($this->processor_->process($inputProtocol, $outputProtocol)) { }
         }
+      }
+      catch (TTransportException $e) { }
     }
+  }
 
   /**
    * Stops the server running. Kills the transport

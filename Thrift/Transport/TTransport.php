@@ -65,17 +65,16 @@ abstract class TTransport {
    * @return string The data, of exact length
    * @throws TTransportException if cannot read data
    */
-    public function readAll($len)
-    {
-        // return $this->read($len);
+  public function readAll($len) {
+    // return $this->read($len);
 
-        $data = '';
-        $got = 0;
-        while (($got = TStringFuncFactory::create()->strlen($data)) < $len) {
-            $data .= $this->read($len - $got);
-        }
-        return $data;
+    $data = '';
+    $got = 0;
+    while (($got = TStringFuncFactory::create()->strlen($data)) < $len) {
+      $data .= $this->read($len - $got);
     }
+    return $data;
+  }
 
   /**
    * Writes the given data out.

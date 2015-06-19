@@ -13,9 +13,10 @@ $loader->register();
 $service = new Services\HelloSwoole\Handler();
 $processor = new Services\HelloSwoole\HelloSwooleProcessor($service);
 $socket_tranport = new TServerSocket('0.0.0.0', 8091);
-$out_factory = $in_factory = new Thrift\Factory\TFramedTransportFactory();
-$out_protocol = $in_protocol = new Thrift\Factory\TBinaryProtocolFactory();
+$in_transport =$out_transport = new \Thrift\Factory\TFramedTransportFactory();
+$in_protocol =$out_protocol =  new \Thrift\Factory\TBinaryProtocolFactory(true, true);
 
-$server = new Swoole\Thrift\Server($processor, $socket_tranport, $in_factory, $out_factory, $in_protocol, $out_protocol);
+$server = new Swoole\Thrift\Server($processor, $socket_tranport, $in_transport, $out_transport, $in_protocol, $out_protocol);
+
 $server->serve();
 

@@ -10,7 +10,7 @@ class TTransportFactory {
    * @param TTransport $transport
    * @return TTransport
    */
-  public static function getTransport(\Thrift\Transport\TTransport $transport) {
+  public static function getTransport(TTransport $transport) {
     return $transport;
   }
 }

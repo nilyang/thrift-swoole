@@ -105,6 +105,7 @@ class TFramedTransport extends TTransport {
     if (TStringFuncFactory::create()->strlen($this->rBuf_) === 0) {
       $this->readFrame();
     }
+
     // Just return full buff
     if ($len >= TStringFuncFactory::create()->strlen($this->rBuf_)) {
       $out = $this->rBuf_;
