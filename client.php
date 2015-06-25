@@ -20,7 +20,7 @@ $transport->open();
 
 $client = new Services\HelloSwoole\HelloSwooleClient($protocol);
 $message = new Services\HelloSwoole\Message(array('send_uid' => 350749960, 'name' => 'rango'));
-var_dump($message);exit;
+var_dump($message);
 $ret = $client->sendMessage($message);
 var_dump($ret);
 
